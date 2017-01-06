@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"log"
 	"net"
 
@@ -8,7 +9,7 @@ import (
 )
 
 // StartProxyServer start tcp proxy server for Mysql.
-func StartProxyServer(host string) {
+func StartProxyServer(host string, db *sql.DB) {
 	listen, err := net.Listen("tcp", host)
 	if err != nil {
 		log.Panic(err)
@@ -25,11 +26,11 @@ func StartProxyServer(host string) {
 			continue
 		}
 
-		go proxyHandle(conn)
+		go proxyHandle(conn, db)
 	}
 }
 
-func proxyHandle(conn net.Conn) {
+func proxyHandle(conn net.Conn, db *sql.DB) {
 	// close connection before exit
 	defer conn.Close()
 
@@ -37,9 +38,13 @@ func proxyHandle(conn net.Conn) {
 
 	// Create a connection with user root and an empty passowrd
 	// We only an empty handler to handle command too
-	siddonconn, _ := siddon.NewConn(conn, "root", "", MysqlHandler{})
+	siddonconn, _ := siddon.NewConn(conn, "root", "", MysqlHandler{db: db})
 
 	for {
-		siddonconn.HandleCommand()
+		err := siddonconn.HandleCommand()
+		if err != nil {
+			log.Println(err)
+			return
+		}
 	}
 }

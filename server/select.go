@@ -41,11 +41,9 @@ func (h MysqlHandler) SelectDB(selectStatement string) (*mysql.Result, error) {
 	// 2. Process result
 	columns, _ := rows.Columns()
 	scanArgs := make([]interface{}, len(columns))
-
 	valueList := [][]interface{}{}
 
 	for rows.Next() {
-
 		values := make([]interface{}, len(columns))
 		for i := range values {
 			scanArgs[i] = &values[i]
@@ -53,6 +51,16 @@ func (h MysqlHandler) SelectDB(selectStatement string) (*mysql.Result, error) {
 
 		// parse records
 		err = rows.Scan(scanArgs...)
+		if err != nil {
+			return nil, err
+		}
+
+		for i, _ := range values {
+			if values[i] == nil {
+				values[i] = []byte{}
+			}
+		}
+
 		valueList = append(valueList, values)
 
 	}

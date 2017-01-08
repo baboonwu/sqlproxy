@@ -31,7 +31,7 @@ func (h MysqlHandler) HandleQuery(queryStr string) (*Result, error) {
 
 	var ok bool
 	var query *sqlparser.Select
-	// var insert *sqlparser.Insert
+	var insert *sqlparser.Insert
 	var result *Result
 
 	// 2. convert type to Select/Insert/Upadte/Delete
@@ -43,14 +43,12 @@ func (h MysqlHandler) HandleQuery(queryStr string) (*Result, error) {
 		}
 		result, err = h.handleSelect(query)
 
-	// TODO: open comment for insert
-	// case *sqlparser.Insert:
-	// 	insert, ok = statement.(*sqlparser.Insert)
-	// 	if !ok {
-	// 		return nil, fmt.Errorf("convert to insert sql failed. sql=%s \n", insert)
-	// 	}
-	// 	// log.Println(sqlparser.String(insert.Table))
-	// 	// result, err = handleSelect(query)
+	case *sqlparser.Insert:
+		insert, ok = statement.(*sqlparser.Insert)
+		if !ok {
+			return nil, fmt.Errorf("convert to insert sql failed. sql=%s \n", insert)
+		}
+		result, err = h.handleInsert(insert)
 
 	default:
 

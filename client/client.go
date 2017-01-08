@@ -25,20 +25,29 @@ func main() {
 
 	conn.Ping()
 
-	// // Insert
-	// r, err := conn.Execute(`insert into table (id, name) values (1, "abc")`)
-	// if err != nil {
-	// 	conn.Close()
-	// 	log.Panic(err)
-	// }
-	//
-	// // Get last insert id
-	// println(r.InsertId)
+	// Insert
+	r, err := conn.Execute(`insert into customers (id, name, age) values (5, "abc", 14)`)
+	if err != nil {
+		log.Println(err)
+	}
+	if r != nil {
+		// Get last insert id
+		log.Println(r)
+	}
 
 	// Select
 	result, err := conn.Execute(`select id, name, city from users where id > 0`)
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
+	}
+	if result != nil {
+		rowNum := result.RowNumber()
+		for i := 0; i < rowNum; i++ {
+			id, _ := result.GetStringByName(i, "id")
+			name, _ := result.GetStringByName(i, "name")
+			city, _ := result.GetStringByName(i, "city")
+			log.Printf("row_%v:(%v %v %v) \n", i, id, name, city)
+		}
 	}
 
 	// log.Println(result.Fields)
@@ -47,15 +56,4 @@ func main() {
 	// log.Println(result.RowDatas)
 	// log.Println(result.RowNumber())
 
-	rowNum := result.RowNumber()
-	for i := 0; i < rowNum; i++ {
-		id, _ := result.GetStringByName(i, "id")
-		name, _ := result.GetStringByName(i, "name")
-		city, _ := result.GetStringByName(i, "city")
-		log.Printf("row_%v=(%v %v %v) \n", i, id, name, city)
-	}
-
-	// Handle resultset
-	// v, _ := r.GetInt(0, 0)
-	// v, _ = r.GetIntByName(0, "id")
 }

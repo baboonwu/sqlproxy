@@ -25,13 +25,29 @@ func main() {
 
 	conn.Ping()
 
-	// Insert
-	r, err := conn.Execute(`insert into customers (id, name, age) values (5, "abc", 14)`)
+	// Delete
+	r, err := conn.Execute(`delete from customers where id=4`)
 	if err != nil {
 		log.Println(err)
 	}
 	if r != nil {
-		// Get last insert id
+		log.Println(r)
+	}
+
+	// Insert
+	r, err = conn.Execute(`insert into customers (id, name, age) values (4, "abc", 14)`)
+	if err != nil {
+		log.Println(err)
+	}
+	if r != nil {
+		log.Println(r)
+	}
+
+	r, err = conn.Execute(`update customers set age=27 where id=4`)
+	if err != nil {
+		log.Println(err)
+	}
+	if r != nil {
 		log.Println(r)
 	}
 

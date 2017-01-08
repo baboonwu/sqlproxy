@@ -30,6 +30,7 @@ func (h MysqlHandler) handleSelect(selectStatement *sqlparser.Select) (*mysql.Re
 
 }
 
+// SelectDB is responsable for doing select query from Mysql
 func (h MysqlHandler) SelectDB(selectStatement string) (*mysql.Result, error) {
 	// 1. Exec mysql query
 	rows, err := h.db.Query(selectStatement)
@@ -38,7 +39,6 @@ func (h MysqlHandler) SelectDB(selectStatement string) (*mysql.Result, error) {
 	}
 
 	// 2. Process result
-	//字典类型, 构造scanArgs、values两个数组，scanArgs的每个值指向values相应值的地址
 	columns, _ := rows.Columns()
 	scanArgs := make([]interface{}, len(columns))
 
@@ -63,7 +63,6 @@ func (h MysqlHandler) SelectDB(selectStatement string) (*mysql.Result, error) {
 		valueList,
 		false,
 	)
-	// log.Println([]interface{}{values})
 	if err != nil {
 		return nil, err
 	}

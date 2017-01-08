@@ -43,6 +43,7 @@ func (h MysqlHandler) HandleQuery(queryStr string) (*Result, error) {
 		}
 		result, err = h.handleSelect(query)
 
+	// TODO: open comment for insert
 	// case *sqlparser.Insert:
 	// 	insert, ok = statement.(*sqlparser.Insert)
 	// 	if !ok {
